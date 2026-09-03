@@ -1,68 +1,27 @@
-# GVöS Miet- & Reservationsportal – Demo v0.4
+# GVöS Miet- & Reservationsportal – Supabase v0.5
 
-Neu in v0.4:
+Diese Version verwendet Supabase Auth, PostgreSQL und Row Level Security.
 
-- drei Rollen: Kunde, Einsatzkraft und Administrator
-- Einsatzkräfte sehen alle Vermietungen und können direkt erfassen und sperren
-- globale Einsatzsperre für alle aktiven Mietobjekte
-- manuelle Auswahl der Mieter vor einer Rückruf-E-Mail
-- Rückgabefrist von 12 Stunden wird automatisch berechnet
-- verwaltbare Mailtexte für Anfrage, Bestätigung, Einsatzrückruf und allgemeinen Einsatzhinweis
-- allgemeiner Einsatzhinweis wird an Anfrage- und Bestätigungsmails angefügt
-- Demo-Versandprotokoll für die spätere Anbindung an Supabase/Resend
+## Inbetriebnahme
 
-Neu in v0.3:
-
-- neue Mietobjekte direkt im Adminbereich erfassen
-- Objekte aktivieren und deaktivieren
-- Räume mit Gebäuden verbinden und als Gesamtobjekt sperren
-- Selbstnutzung als interne Sperre erfassen
-- mehrere Kundenlogins verwalten
-- geschützte Kundenseite mit Anmeldung
-- Volltextsuche über Name, Kategorie und Beschreibung
-- 21-Tage-Belegungskalender bei nicht verfügbaren Objekten
-
-Neu in v0.2:
-
-- offizielles Verbandslogo und daran angepasste Farben
-- Mietpositionen im Adminbereich bearbeiten
-- Vermietungen direkt erfassen und bestehende Einträge bearbeiten
-- Gebäude als Gesamtobjekt mit zugeordneten Einzelräumen
-- automatische Sperrlogik zwischen Gesamtgebäude und Einzelräumen
-
-Eigenständige Testversion für den **Gemeindeverband öffentliche Sicherheit Bielersee Süd-West**.
+1. Datei `2026-09-03_v0.5_emergency_patch.sql` im Supabase SQL Editor ausführen.
+2. Den Inhalt dieses Ordners in das GitHub-Repository `bsw_miet_tool` hochladen.
+3. Mit einem in Supabase Auth angelegten und in `profiles` freigeschalteten Konto anmelden.
 
 ## Enthalten
 
-- öffentliche Miet-/Reservationsseite (`index.html`)
-- lokaler Adminbereich (`admin.html`)
-- Demo-Datenbank über `localStorage` – keine externe Datenbank nötig
-- Preislogik gemäss bereitgestelltem Gebührenkatalog:
-  - eigene Partner & Verbandsgemeinden
-  - überörtliche Hilfe & Dritte (exkl. Private)
-  - Positionen pro Einsatztag / Tag / 12 h
-- Räume als eigene Kategorie mit **exakter Datum-/Uhrzeitbuchung**
-- KP Täuffelen: Führungsraum und Aufenthaltsraum als erste Demo-Räume
-- Verkaufsmaterial (Sandsäcke) getrennt von Mietobjekten
-- Admin: Anfrage bestätigen, stornieren, löschen und 7-Tage-Belegung
+- E-Mail-/Passwort-Anmeldung über Supabase Auth
+- Rollen Kunde, Einsatzkraft und Administrator
+- Mietobjekte und Verkaufsartikel aus der Datenbank
+- serverseitige Mengen- und Konfliktprüfung
+- Reservationen, Direktvermietungen und Selbstnutzungssperren
+- globale Einsatzsperre
+- Raum-/Gebäudeverbindungen
+- Adminpflege von Objekten, Rollen und E-Mail-Texten
 
-## Wichtige Demo-Annahmen
+## Noch nicht aktiviert
 
-Der Gebührenkatalog enthält keine Raumtarife. Deshalb werden Räume bewusst als **Preis auf Anfrage** geführt. Weitere Räume und deren Preise können vor der Supabase-Phase ergänzt werden.
+- Der tatsächliche E-Mail-Versand benötigt eine Supabase Edge Function und einen Versanddienst.
+- Neue Auth-Benutzer werden bis dahin unter `Authentication > Users` angelegt; Rolle und Aktivstatus können danach im Adminbereich gepflegt werden.
 
-Private sind in der zweiten Tarifspalte des Gebührenkatalogs ausdrücklich nicht enthalten. Deshalb werden private Anfragen ebenfalls **Preis auf Anfrage** geführt.
-
-## Testen
-
-Am einfachsten den Ordner über einen lokalen Webserver öffnen, z. B. mit VS Code Live Server oder GitHub Pages. `index.html` ist die Kundenseite, `admin.html` der Demo-Adminbereich.
-
-Die Reservationen liegen ausschliesslich im Browser-`localStorage`. Kundenseite und Admin müssen deshalb im selben Browser und unter derselben Origin geöffnet werden.
-
-## Nächster Schritt
-
-Nach Freigabe der Bedienlogik:
-1. definitive Räume / Ressourcen / Bestände festlegen
-2. definitive Raumtarife ergänzen
-3. separates Supabase-Projekt erstellen
-4. Authentifizierung und RLS einrichten
-5. Resend / E-Mail-Benachrichtigungen integrieren
+Der Publishable Key im Frontend ist öffentlich verwendbar. Secret- und Service-Role-Schlüssel dürfen niemals in diese Dateien eingetragen werden.

@@ -1,1 +1,13 @@
-const uk='gvos_demo_users_v04',sk='gvos_session_v04',defaults=[{id:'u-customer',username:'gemeinde',password:'demo2026',label:'Verbandsgemeinde',role:'customer',active:true},{id:'u-responder',username:'einsatz',password:'einsatz2026',label:'Einsatzkraft',role:'responder',active:true},{id:'u-admin',username:'admin',password:'admin2026',label:'Administration',role:'admin',active:true}];if(!localStorage.getItem(uk))localStorage.setItem(uk,JSON.stringify(defaults));const existing=JSON.parse(sessionStorage.getItem(sk)||'null');if(existing)location.replace(existing.role==='customer'?'index.html':'admin.html');document.getElementById('loginForm').onsubmit=e=>{e.preventDefault();const username=document.getElementById('loginUser').value.trim(),password=document.getElementById('loginPassword').value,user=JSON.parse(localStorage.getItem(uk)||'[]').find(x=>x.active!==false&&x.username===username&&x.password===password);if(!user){const n=document.getElementById('loginError');n.textContent='Benutzername oder Passwort ist nicht korrekt.';n.classList.remove('hidden');return}sessionStorage.setItem(sk,JSON.stringify({id:user.id,username:user.username,label:user.label,role:user.role||'customer'}));location.replace((user.role||'customer')==='customer'?'index.html':'admin.html')};
+const cfg=window.GVOS_CONFIG||{};
+const db=window.supabase.createClient(cfg.supabaseUrl,cfg.supabaseKey);
+db.auth.getSession().then(({data})=>{if(data.session)location.replace('index.html')});
+document.getElementById('loginForm').onsubmit=async e=>{
+  e.preventDefault();
+  const box=document.getElementById('loginError'),button=e.submitter;
+  box.classList.add('hidden');button.disabled=true;button.textContent='Anmelden …';
+  const {data,error}=await db.auth.signInWithPassword({email:document.getElementById('loginUser').value.trim(),password:document.getElementById('loginPassword').value});
+  if(error){box.textContent='E-Mail-Adresse oder Passwort ist nicht korrekt.';box.classList.remove('hidden');button.disabled=false;button.textContent='Anmelden';return}
+  const {data:profile}=await db.from('profiles').select('role,active').eq('id',data.user.id).single();
+  if(!profile?.active){await db.auth.signOut();box.textContent='Dieser Zugang ist deaktiviert.';box.classList.remove('hidden');button.disabled=false;button.textContent='Anmelden';return}
+  location.replace(['admin','responder'].includes(profile.role)?'admin.html':'index.html');
+};

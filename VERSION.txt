@@ -1,3 +1,3 @@
-GVöS Miet- & Reservationsportal
-Demo v0.4
+GVöS Miet- & Reservationsportal – Supabase v0.5
+Supabase v0.5
 2026-09-03

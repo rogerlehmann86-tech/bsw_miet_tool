@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 80" role="img" aria-label="Gemeindeverband öffentliche Sicherheit Bielersee Süd-West">
+  <rect width="160" height="80" rx="10" fill="#ffffff"/>
+  <path d="M18 46 C42 22, 60 22, 86 44 C105 59, 126 56, 145 37" fill="none" stroke="#1f86a8" stroke-width="9" stroke-linecap="round"/>
+  <path d="M22 57 C48 41, 68 42, 91 56" fill="none" stroke="#e98a2b" stroke-width="7" stroke-linecap="round"/>
+  <circle cx="35" cy="25" r="9" fill="#e98a2b"/>
+</svg>
