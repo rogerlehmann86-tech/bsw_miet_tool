@@ -1,4 +1,15 @@
-# GVöS Miet- & Reservationsportal – Demo v0.3
+# GVöS Miet- & Reservationsportal – Demo v0.4
+
+Neu in v0.4:
+
+- drei Rollen: Kunde, Einsatzkraft und Administrator
+- Einsatzkräfte sehen alle Vermietungen und können direkt erfassen und sperren
+- globale Einsatzsperre für alle aktiven Mietobjekte
+- manuelle Auswahl der Mieter vor einer Rückruf-E-Mail
+- Rückgabefrist von 12 Stunden wird automatisch berechnet
+- verwaltbare Mailtexte für Anfrage, Bestätigung, Einsatzrückruf und allgemeinen Einsatzhinweis
+- allgemeiner Einsatzhinweis wird an Anfrage- und Bestätigungsmails angefügt
+- Demo-Versandprotokoll für die spätere Anbindung an Supabase/Resend
 
 Neu in v0.3:
 
