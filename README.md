@@ -1,4 +1,4 @@
-# GVöS Miet- & Reservationsportal – Supabase v0.5
+# GVöS Miet- & Reservationsportal – Supabase v0.6
 
 Diese Version verwendet Supabase Auth, PostgreSQL und Row Level Security.
 
@@ -18,10 +18,10 @@ Diese Version verwendet Supabase Auth, PostgreSQL und Row Level Security.
 - globale Einsatzsperre
 - Raum-/Gebäudeverbindungen
 - Adminpflege von Objekten, Rollen und E-Mail-Texten
+- geschütztes Erstellen, Bearbeiten und Löschen von Anmeldekonten über die Edge Function `admin-users`
 
 ## Noch nicht aktiviert
 
 - Der tatsächliche E-Mail-Versand benötigt eine Supabase Edge Function und einen Versanddienst.
-- Neue Auth-Benutzer werden bis dahin unter `Authentication > Users` angelegt; Rolle und Aktivstatus können danach im Adminbereich gepflegt werden.
 
 Der Publishable Key im Frontend ist öffentlich verwendbar. Secret- und Service-Role-Schlüssel dürfen niemals in diese Dateien eingetragen werden.
