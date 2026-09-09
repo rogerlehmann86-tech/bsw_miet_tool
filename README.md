@@ -1,4 +1,4 @@
-# GVöS Miet- & Reservationsportal – Supabase v0.6
+# GVöS Miet- & Reservationsportal – Supabase v0.8
 
 Diese Version verwendet Supabase Auth, PostgreSQL und Row Level Security.
 
@@ -19,9 +19,14 @@ Diese Version verwendet Supabase Auth, PostgreSQL und Row Level Security.
 - Raum-/Gebäudeverbindungen
 - Adminpflege von Objekten, Rollen und E-Mail-Texten
 - geschütztes Erstellen, Bearbeiten und Löschen von Anmeldekonten über die Edge Function `admin-users`
+- Transaktionsmails über Resend und die Edge Function `rental-email`
+- Eingangsbestätigung an Kunden und neue Anfrage an `geschaeftsstelle@bielersee-suedwest.ch`
+- Bestätigungsmail bei Freigabe und Rückrufmails bei einer Einsatzsperre
 
-## Noch nicht aktiviert
+## E-Mail-Konfiguration
 
-- Der tatsächliche E-Mail-Versand benötigt eine Supabase Edge Function und einen Versanddienst.
+- Absender und interner Empfänger: `geschaeftsstelle@bielersee-suedwest.ch`
+- Benötigtes Supabase-Secret: `RESEND_API_KEY`
+- Die Versandhistorie wird in `mail_outbox` protokolliert.
 
 Der Publishable Key im Frontend ist öffentlich verwendbar. Secret- und Service-Role-Schlüssel dürfen niemals in diese Dateien eingetragen werden.

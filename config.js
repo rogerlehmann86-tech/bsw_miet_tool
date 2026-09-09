@@ -6,5 +6,5 @@ window.GVOS_CONFIG = {
   email: 'geschaeftsstelle@bielersee-suedwest.ch',
   phone: '032 396 28 77',
   currency: 'CHF',
-  version: 'Supabase v0.6'
+  version: 'Supabase v0.8'
 };
