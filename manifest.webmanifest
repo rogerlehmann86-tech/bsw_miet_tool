@@ -2,7 +2,7 @@
   "name": "BSW Miet- und Reservationsportal",
   "short_name": "BSW Reservation",
   "description": "Miet- und Reservationsportal des Gemeindeverbands öffentliche Sicherheit Bielersee Süd-West",
-  "start_url": "./login.html",
+  "start_url": "./index.html",
   "id": "./",
   "scope": "./",
   "display": "standalone",
