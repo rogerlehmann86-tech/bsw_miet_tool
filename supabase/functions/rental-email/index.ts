@@ -282,20 +282,7 @@ Deno.serve(async (req: Request) => {
         .eq("active", true);
       if (assignmentError) throw assignmentError;
 
-      const codeIds = [...new Set((assignments || []).map((assignment) => assignment.access_code_id))];
-      if (!codeIds.length) return json({ ok: true, sent: 0 });
-
-      const { data: activeCodes, error: codeError } = await admin
-        .from("access_codes")
-        .select("id")
-        .in("id", codeIds)
-        .eq("active", true);
-      if (codeError) throw codeError;
-
-      const activeCodeIds = new Set((activeCodes || []).map((code) => code.id));
-      const assignedUserIds = [...new Set((assignments || [])
-        .filter((assignment) => activeCodeIds.has(assignment.access_code_id))
-        .map((assignment) => assignment.user_id))];
+      const assignedUserIds = [...new Set((assignments || []).map((assignment) => assignment.user_id))];
       if (!assignedUserIds.length) return json({ ok: true, sent: 0 });
 
       const { data: profiles, error: profilesError } = await admin
