@@ -9,5 +9,5 @@ document.getElementById('loginForm').onsubmit=async e=>{
   if(error){box.textContent='E-Mail-Adresse oder Passwort ist nicht korrekt.';box.classList.remove('hidden');button.disabled=false;button.textContent='Anmelden';return}
   const {data:profile}=await db.from('profiles').select('role,active').eq('id',data.user.id).single();
   if(!profile?.active){await db.auth.signOut();box.textContent='Dieser Zugang ist deaktiviert.';box.classList.remove('hidden');button.disabled=false;button.textContent='Anmelden';return}
-  location.replace(['admin','responder'].includes(profile.role)?'admin.html':'index.html');
+  location.replace('index.html');
 };
