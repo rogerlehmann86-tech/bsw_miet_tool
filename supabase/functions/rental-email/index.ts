@@ -273,6 +273,73 @@ Deno.serve(async (req: Request) => {
       return json({ ok: true, sent: results.length, results });
     }
 
+    if (input.action === "access_code_update") {
+      if (profile.role !== "admin") return json({ error: "Nur Administratoren dürfen Codeinhaber informieren" }, 403);
+
+      const { data: assignments, error: assignmentError } = await admin
+        .from("access_code_assignments")
+        .select("access_code_id, user_id")
+        .eq("active", true);
+      if (assignmentError) throw assignmentError;
+
+      const codeIds = [...new Set((assignments || []).map((assignment) => assignment.access_code_id))];
+      if (!codeIds.length) return json({ ok: true, sent: 0 });
+
+      const { data: activeCodes, error: codeError } = await admin
+        .from("access_codes")
+        .select("id")
+        .in("id", codeIds)
+        .eq("active", true);
+      if (codeError) throw codeError;
+
+      const activeCodeIds = new Set((activeCodes || []).map((code) => code.id));
+      const assignedUserIds = [...new Set((assignments || [])
+        .filter((assignment) => activeCodeIds.has(assignment.access_code_id))
+        .map((assignment) => assignment.user_id))];
+      if (!assignedUserIds.length) return json({ ok: true, sent: 0 });
+
+      const { data: profiles, error: profilesError } = await admin
+        .from("profiles")
+        .select("id, display_name, organisation")
+        .in("id", assignedUserIds)
+        .eq("active", true);
+      if (profilesError) throw profilesError;
+
+      const recipients = new Map<string, { email: string; name: string }>();
+      for (const recipientProfile of profiles || []) {
+        const { data: authData, error: authError } = await admin.auth.admin.getUserById(recipientProfile.id);
+        if (authError) throw authError;
+        const email = authData.user?.email?.trim();
+        if (!email) continue;
+        recipients.set(email.toLowerCase(), {
+          email,
+          name: recipientProfile.display_name || recipientProfile.organisation || "Codeinhaberin oder Codeinhaber",
+        });
+      }
+
+      const results = [];
+      for (const recipient of recipients.values()) {
+        const body = [
+          `Guten Tag ${recipient.name}`,
+          "",
+          "Bei den Ihnen im BSW Reservationsportal zugewiesenen Zutrittscodes gab es Änderungen.",
+          "",
+          "Bitte melden Sie sich im Portal an und prüfen Sie Ihre aktuell freigeschalteten Codes.",
+          "",
+          "Freundliche Grüsse",
+          "Gemeindeverband öffentliche Sicherheit Bielersee Süd-West",
+        ].join("\n");
+        results.push(await deliver({
+          recipient: recipient.email,
+          mailType: "other",
+          subject: "Änderung bei den Zutrittscodes",
+          body,
+          deduplicate: false,
+        }));
+      }
+      return json({ ok: true, sent: results.length, results });
+    }
+
     return json({ error: "Unbekannte Aktion" }, 400);
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error);
