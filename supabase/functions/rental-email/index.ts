@@ -248,7 +248,7 @@ Deno.serve(async (req: Request) => {
         .from("reservations")
         .select("*")
         .in("id", ids)
-        .eq("status", "confirmed");
+        .in("status", ["confirmed", "to_bill", "billed"]);
       if (error) throw error;
       const results = [];
       for (const reservation of reservations || []) {
