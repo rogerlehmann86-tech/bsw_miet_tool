@@ -82,7 +82,7 @@ Deno.serve(async (req: Request) => {
   if (!profile?.active) return json({ error: "Zugang ist nicht aktiv" }, 403);
   const internal = ["admin", "responder"].includes(profile.role);
 
-  let input: { action?: string; reservation_id?: string; reservation_ids?: string[]; deadline?: string };
+  let input: { action?: string; reservation_id?: string; reservation_ids?: string[]; starts_at?: string; ends_at?: string; deadline?: string };
   try {
     input = await req.json();
   } catch {
@@ -241,6 +241,11 @@ Deno.serve(async (req: Request) => {
 
     if (input.action === "emergency") {
       if (!internal) return json({ error: "Nur interne Benutzer dürfen Einsatzmails versenden" }, 403);
+      const startsAt = input.starts_at ? new Date(input.starts_at) : null;
+      const endsAt = input.ends_at ? new Date(input.ends_at) : null;
+      if (!startsAt || !endsAt || !Number.isFinite(startsAt.getTime()) || !Number.isFinite(endsAt.getTime()) || endsAt <= startsAt) {
+        return json({ error: "Ein gültiger Einsatzzeitraum ist erforderlich" }, 400);
+      }
       const ids = [...new Set(input.reservation_ids || [])].slice(0, 200);
       if (!ids.length) return json({ ok: true, sent: 0 });
       const deadline = input.deadline ? formatDate(input.deadline) : formatDate(new Date(Date.now() + 12 * 3600000).toISOString());
@@ -248,11 +253,15 @@ Deno.serve(async (req: Request) => {
         .from("reservations")
         .select("*")
         .in("id", ids)
-        .in("status", ["confirmed", "to_bill", "billed"]);
+        .eq("reservation_type", "rental")
+        .in("status", ["confirmed", "to_bill", "billed"])
+        .not("email", "is", null)
+        .neq("email", "")
+        .lt("starts_at", endsAt.toISOString())
+        .gt("ends_at", startsAt.toISOString());
       if (error) throw error;
       const results = [];
       for (const reservation of reservations || []) {
-        if (!reservation.email) continue;
         const values = {
           name: reservation.customer_name,
           object: reservation.product_name_snapshot,
