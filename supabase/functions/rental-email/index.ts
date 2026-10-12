@@ -218,7 +218,7 @@ Deno.serve(async (req: Request) => {
     }
 
     if (input.action === "confirmation") {
-      if (!internal) return json({ error: "Nur interne Benutzer dürfen Bestätigungen versenden" }, 403);
+      if (profile.role !== "admin") return json({ error: "Nur Administratoren dürfen Bestätigungen versenden" }, 403);
       const reservation = await reservationById(input.reservation_id);
       if (reservation.status !== "confirmed") return json({ error: "Die Reservation ist nicht bestätigt" }, 409);
       if (!reservation.email) return json({ ok: true, sent: 0, skipped: "Keine E-Mail-Adresse" });
