@@ -16,7 +16,8 @@ with check (
     and updated_by = auth.uid()
   )
   or (
-    requester_user_id = auth.uid()
+    public.current_user_role() = 'customer'
+    and requester_user_id = auth.uid()
     and created_by = auth.uid()
     and reservation_type = 'rental'
     and status = 'pending'
@@ -30,12 +31,13 @@ for update
 to authenticated
 using (
   public.is_admin()
-  or (requester_user_id = auth.uid() and status = 'pending')
+  or (public.current_user_role() = 'customer' and requester_user_id = auth.uid() and status = 'pending')
 )
 with check (
   public.is_admin()
   or (
-    requester_user_id = auth.uid()
+    public.current_user_role() = 'customer'
+    and requester_user_id = auth.uid()
     and status = 'pending'
     and reservation_type = 'rental'
   )
