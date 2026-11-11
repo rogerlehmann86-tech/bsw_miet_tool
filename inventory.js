@@ -219,7 +219,7 @@
     if(!isAdmin())return;
     const selected=state.items.filter(x=>state.selected.has(x.id));
     if(!selected.length)return message('Bitte mindestens eine Materialposition auswählen.','error');
-    if(selected.length>200)return message('Pro Vorgang sind maximal 200 Positionen möglich.','error');
+    if(selected.length>2000)return message('Pro Vorgang sind maximal 2’000 Positionen möglich.','error');
     if(selected.some(x=>Number(x.quantity)<=0))return message('Positionen mit Bestand 0 können nicht übertragen werden.','error');
     byId('invMoveForm').reset();
     byId('invMoveSelected').textContent=selected.length===1?selected[0].name+' · Bestand '+qtyFmt(selected[0].quantity):selected.length+' ausgewählte Materialpositionen (jeweils gesamte Menge)';
@@ -460,6 +460,8 @@
       byId(id).addEventListener(id==='invSearch'?'input':'change',()=>{state.page=0;renderItems();setAdminView();}));
     byId('invPrev').addEventListener('click',()=>{state.page--;renderItems();setAdminView();});
     byId('invNext').addEventListener('click',()=>{state.page++;renderItems();setAdminView();});
+    byId('invSelectFiltered').addEventListener('click',()=>{filteredItems().forEach(x=>state.selected.add(x.id));renderItems();setAdminView();});
+    byId('invClearSelected').addEventListener('click',()=>{state.selected.clear();renderItems();setAdminView();});
     byId('invSelectAll').addEventListener('change',e=>{
       filteredItems().slice(state.page*state.perPage,(state.page+1)*state.perPage).forEach(x=>e.target.checked?state.selected.add(x.id):state.selected.delete(x.id));
       renderItems();setAdminView();
