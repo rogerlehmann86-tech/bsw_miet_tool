@@ -1,0 +1,42 @@
+
+.inv-main{padding-top:20px}
+.inv-kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin:0 0 18px}
+.inv-kpi{background:#fff;border:1px solid var(--line);border-radius:10px;padding:17px;box-shadow:var(--shadow);display:flex;flex-direction:column;gap:5px;min-width:0}
+.inv-kpi-label{font-size:12px;color:var(--muted);font-weight:800}
+.inv-kpi strong{font-size:clamp(18px,2.3vw,27px);white-space:nowrap;color:#17657e}
+.inv-kpi small{font-size:11px;color:var(--muted)}
+.inv-panel{overflow:hidden}
+.inv-head{display:flex;justify-content:space-between;align-items:center;gap:18px;flex-wrap:wrap;margin-bottom:16px}
+.inv-head h2,.inv-head h3{margin:0 0 5px}.inv-head p{margin:0}
+.inv-head .button-row{display:flex;align-items:center;gap:7px;flex-wrap:wrap}
+.inv-tabs{display:flex;gap:8px;flex-wrap:wrap;padding:0 0 14px;margin-bottom:16px;border-bottom:1px solid var(--line)}
+.inv-tab{font:inherit;font-size:14px;font-weight:750;border:1px solid #cbd9dd;background:#f7fafb;padding:10px 13px;border-radius:8px;cursor:pointer;color:#38535f}
+.inv-tab.active{background:#17657e;border-color:#17657e;color:#fff}
+.inv-filters{display:grid;grid-template-columns:minmax(190px,2fr) repeat(4,minmax(135px,1fr));align-items:end;gap:10px;margin-bottom:14px}
+.inv-filters .field label{font-size:12px}
+.inv-filters .field input,.inv-filters .field select{width:100%;padding:9px 10px}
+.inv-export{display:flex;align-items:center;flex-wrap:wrap;gap:10px;background:#f0f6f8;border:1px solid #dce8ed;border-radius:9px;padding:11px;margin-bottom:12px;font-size:13px}
+.inv-export select{max-width:min(440px,100%);min-width:210px;flex:1;padding:9px;border:1px solid #cbd7db;background:#fff;border-radius:6px;font:inherit}
+.inv-export .btn{padding:9px 12px}
+.inv-table-scroll{width:100%;overflow-x:auto;border:1px solid #e2e9ec;border-radius:8px}
+.inv-table{width:100%;border-collapse:collapse;min-width:850px;font-size:13px}
+.inv-table th{background:#edf4f6;color:#345467;text-align:left;font-size:11px;text-transform:uppercase;letter-spacing:.025em;white-space:nowrap}
+.inv-table th,.inv-table td{padding:11px 9px;border-bottom:1px solid #e7edef;vertical-align:top}
+.inv-table tbody tr:nth-child(even){background:#fbfcfd}
+.inv-table tbody tr:hover{background:#edf7fa}
+.inv-table .inv-number{text-align:right;white-space:nowrap;font-variant-numeric:tabular-nums}
+.inv-sub{display:block;font-size:11px;color:#657880;margin-top:4px;line-height:1.45;max-width:300px}
+.inv-warning{display:inline-block;color:#a34517;background:#fff2dd;font-size:11px;font-weight:750;border-radius:4px;padding:3px 6px;margin-top:4px}
+.inv-link{display:inline-block;font-size:11px;font-weight:750;color:#17657e;background:#e7f4f8;border-radius:6px;padding:4px 6px}
+.inv-footer{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;padding-top:12px}
+.inv-footer .button-row{display:flex;align-items:center;gap:8px}
+.inv-footnote{margin:14px 4px 0;font-size:12px}
+.inv-tab-content .inv-head{margin-top:6px}
+.inv-import-issues{margin-top:12px;max-height:240px;overflow:auto;white-space:pre-wrap;font-size:12px;line-height:1.5;color:#516775}
+#invImportDialog .notice{line-height:1.5}
+#invImportDialog .button-row,#invItemDialog .button-row{display:flex;flex-wrap:wrap;gap:8px;margin-top:13px}
+#invMoveDialog .checkline{display:flex;align-items:center;gap:10px}
+#invMoveDialog .checkline input{width:auto}
+@media(max-width:1150px){.inv-filters{grid-template-columns:repeat(3,minmax(150px,1fr))}.inv-search{grid-column:span 2}}
+@media(max-width:700px){.inv-kpis{grid-template-columns:repeat(2,minmax(0,1fr))}.inv-filters{grid-template-columns:repeat(2,minmax(125px,1fr))}.inv-search{grid-column:span 2}.inv-head .button-row{width:100%}.inv-head .button-row .btn{flex:1}.inv-export select{min-width:100%;order:2}.inv-export .btn{flex:1;order:3}.inv-footer{align-items:start}.inv-kpi strong{font-size:18px}.brand-row .header-actions{display:flex;flex-wrap:wrap}.brand img{width:65px}}
+@media print{.topbar,.hero,.inv-filters,.inv-export,.inv-tabs,.inv-head .button-row,.inv-footer .button-row,.inv-table .inv-admin{display:none!important}.inv-kpis{grid-template-columns:repeat(4,1fr)}.inv-panel{box-shadow:none}.inv-table-scroll{overflow:visible}}
