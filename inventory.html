@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="de"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#064b86">
+<title>Inventarverwaltung | GVöS BSW</title>
+<link rel="manifest" href="manifest.webmanifest?v=3">
+<link rel="icon" href="favicon.ico" sizes="any">
+<link rel="stylesheet" href="styles.css?v=1.1">
+<link rel="stylesheet" href="inventory.css?v=1">
+</head><body>
+<header class="topbar"><div class="wrap brand-row">
+  <div class="brand"><img class="official-logo" src="assets/logo.jpg" alt="Logo"><div class="brand-title">Gemeindeverband öffentliche Sicherheit<small>Bielersee Süd-West · Inventarverwaltung</small></div></div>
+  <div class="header-actions"><span id="invUser" class="small muted"></span><a class="admin-link" href="index.html">Kundenseite</a><a class="admin-link" href="admin.html">Vermietungen</a><button class="admin-link link-button" onclick="GVOSAuth.logout()">Abmelden</button></div>
+</div></header>
+<section class="hero admin-hero"><div class="wrap hero-inner"><div class="eyebrow">Interner Bereich · ZSO BSW</div><h1>Inventarverwaltung</h1><p>Material, Eigentümer und Standorte zentral verwalten. Bewegungen nachvollziehen und Auswertungen als PDF exportieren.</p></div></section>
+<main class="wrap inv-main">
+<div id="invMessage" class="notice hidden" role="status" aria-live="polite"></div>
+<section class="inv-kpis" id="invKpis" aria-label="Inventarkennzahlen"></section>
+<section class="panel inv-panel">
+  <div class="inv-head"><div><h2>Materialbestand</h2><p class="small muted">Gesamtes Inventar inklusive nicht vermietbarer Positionen. Auswahl und Filter wirken auf die aktuelle Liste.</p></div>
+    <div class="button-row"><button class="btn primary inv-admin" id="invNewItem">+ Material erfassen</button><button class="btn inv-admin" id="invTransferBtn">↔ Übertragen / verschieben (<span id="invSelectedCount">0</span>)</button><button class="btn inv-admin" id="invImportBtn">Excel importieren</button></div>
+  </div>
+  <div class="inv-tabs" role="tablist" aria-label="Inventarbereiche">
+    <button class="inv-tab active" data-tab="items">Materialliste</button>
+    <button class="inv-tab" data-tab="owners">Eigentümer</button>
+    <button class="inv-tab" data-tab="sites">Standorte</button>
+    <button class="inv-tab" data-tab="events">Bewegungsjournal</button>
+  </div>
+  <div id="invItemsTab" class="inv-tab-content">
+    <div class="inv-filters">
+      <div class="field inv-search"><label for="invSearch">Suche</label><input type="search" id="invSearch" placeholder="Material, Beschreibung, Sortiment …"></div>
+      <div class="field"><label for="invOwnerFilter">Eigentümer</label><select id="invOwnerFilter"><option value="">Alle</option></select></div>
+      <div class="field"><label for="invSiteFilter">Standort</label><select id="invSiteFilter"><option value="">Alle</option></select></div>
+      <div class="field"><label for="invCategoryFilter">Kategorie</label><select id="invCategoryFilter"><option value="">Alle</option></select></div>
+      <div class="field"><label for="invSpecialFilter">Ansicht</label><select id="invSpecialFilter"><option value="">Alle Positionen</option><option value="rental">Mit Mietobjekt verknüpft</option><option value="unlinked">Noch nicht mit Mietobjekt verknüpft</option><option value="review">Wert prüfen</option></select></div>
+    </div>
+    <div class="inv-export"><label for="invPdfMode"><strong>PDF-Auswertung:</strong></label><select id="invPdfMode"><option value="current">Aktuell gefilterte Materialliste</option><option value="all">Gesamtinventar</option><option value="owners">Zusammenfassung je Eigentümer</option><option value="sites">Zusammenfassung je Standort</option><option value="categories">Zusammenfassung je Kategorie</option><option value="owner-details">Alle Eigentümer mit Materialdetails</option><option value="site-details">Alle Standorte mit Materialdetails</option><option value="rental">Mit Mietobjekten verknüpfte Positionen</option><option value="review">Zu prüfende Werte</option><option value="events">Bewegungsjournal</option></select><button class="btn primary" id="invExportPdf">PDF herunterladen</button><button class="btn" id="invExportCsv">Liste als CSV</button></div>
+    <div class="inv-table-scroll"><table class="inv-table"><thead><tr><th class="inv-admin"><input type="checkbox" id="invSelectAll" title="Alle sichtbaren Positionen auswählen"></th><th>Material / Detail</th><th>Standort / Lagerort</th><th>Eigentümer</th><th class="inv-number">Menge</th><th class="inv-number">Stückwert</th><th class="inv-number">Gesamtwert</th><th>Zuordnung</th><th class="inv-admin"></th></tr></thead><tbody id="invItemsBody"></tbody></table></div>
+    <div class="inv-footer"><div id="invListTotals" class="small"></div><div class="button-row"><button class="btn small" id="invPrev">← Zurück</button><span id="invPageInfo" class="small"></span><button class="btn small" id="invNext">Weiter →</button></div></div>
+  </div>
+  <div id="invOwnersTab" class="inv-tab-content hidden"><div class="inv-head"><h3>Eigentümer und Inventarwerte</h3><button class="btn primary inv-admin" id="invAddOwner">+ Eigentümer</button></div><div id="invOwnersList"></div></div>
+  <div id="invSitesTab" class="inv-tab-content hidden"><div class="inv-head"><h3>Standorte und Inventarwerte</h3><button class="btn primary inv-admin" id="invAddSite">+ Standort</button></div><div id="invSitesList"></div></div>
+  <div id="invEventsTab" class="inv-tab-content hidden"><div class="inv-head"><div><h3>Eigentumsübertragungen und Standortwechsel</h3><p class="small muted">Jeder Vorgang bleibt nachvollziehbar; zusammengehörige Übertragungen haben dieselbe Vorgangsnummer.</p></div><button class="btn" id="invEventsPdf">PDF Bewegungsjournal</button></div><div class="inv-table-scroll"><table class="inv-table"><thead><tr><th>Datum</th><th>Art</th><th>Material</th><th class="inv-number">Menge</th><th class="inv-number">Wert</th><th>Von → Nach</th><th>Bemerkung</th></tr></thead><tbody id="invEventsBody"></tbody></table></div></div>
+</section>
+<p class="small muted inv-footnote">Inventarwert = Bestand × Stückwert. Die Miettarife im Reservationsportal sind davon unabhängig. Eigentumsübertragungen ändern die Vermietbarkeit nicht.</p>
+</main>
+<dialog id="invItemDialog"><div class="dialog-inner"><button type="button" class="dialog-close" data-close="invItemDialog">×</button><h2 id="invItemTitle">Material erfassen</h2>
+<form id="invItemForm"><input type="hidden" id="invItemId"><div class="form-grid">
+<div class="field full"><label>Materialbezeichnung *</label><input id="invEditName" required maxlength="250"></div>
+<div class="field full"><label>Beschreibung</label><textarea id="invEditDescription" rows="2"></textarea></div>
+<div class="field"><label>Kategorie</label><input id="invEditCategory"></div><div class="field"><label>Modul</label><input id="invEditModule"></div>
+<div class="field"><label>Bestand *</label><input id="invEditQty" type="number" min="0" step="0.001" required></div><div class="field"><label>Einheit</label><input id="invEditUnit" value="Stk."></div>
+<div class="field"><label>Wert pro Einheit (CHF)</label><input id="invEditValue" type="number" min="0" step="0.01"></div><div class="field"><label>Wertprüfung</label><select id="invEditValueStatus"><option value="confirmed">Bestätigt</option><option value="calculated">Aus Gesamtwert berechnet</option><option value="needs_review">Zu prüfen</option></select></div>
+<div class="field"><label>Eigentümer *</label><select id="invEditOwner" required></select></div><div class="field"><label>Standort *</label><select id="invEditSite" required></select></div>
+<div class="field"><label>Lagerort</label><input id="invEditStorage"></div><div class="field"><label>Regal / Modul</label><input id="invEditShelf"></div>
+<div class="field"><label>Sortiment</label><input id="invEditAssortment"></div><div class="field"><label>Lieferant</label><input id="invEditSupplier"></div>
+<div class="field full"><label>Mietobjekt verknüpfen (optional)</label><select id="invEditRental"><option value="">Kein Mietobjekt</option></select><small class="muted">Nur Datenverknüpfung. Keine Änderung am Mietbestand oder an Reservationsregeln.</small></div>
+<div class="field full"><label>Bemerkung</label><textarea id="invEditNote" rows="2"></textarea></div></div>
+<p id="invItemEditHint" class="notice small hidden">Bei bestehenden Positionen werden Mengen und Eigentümer/Standort ausschliesslich über «Bestand korrigieren» beziehungsweise «Übertragen» geändert, damit das Journal vollständig bleibt.</p>
+<div class="button-row"><button class="btn primary" type="submit">Speichern</button><button class="btn inv-admin hidden" id="invAdjustBtn" type="button">Bestand korrigieren</button></div></form></div></dialog>
+<dialog id="invMoveDialog"><div class="dialog-inner"><button type="button" class="dialog-close" data-close="invMoveDialog">×</button><h2>Material übertragen / Standort wechseln</h2><p id="invMoveSelected" class="small muted"></p><form id="invMoveForm">
+<div class="form-grid"><div class="field full hidden" id="invMoveQtyBox"><label>Zu übertragende Menge</label><input type="number" min="0.001" step="0.001" id="invMoveQty"></div>
+<div class="field"><label>Neuer Eigentümer</label><select id="invMoveOwner"><option value="">Unverändert</option></select></div>
+<div class="field"><label>Neuer Standort</label><select id="invMoveSite"><option value="">Unverändert</option></select></div>
+<label class="checkline full"><input type="checkbox" id="invMoveStorageCheck"> Lagerort und Regal neu festlegen</label>
+<div class="field"><label>Lagerort (optional)</label><input id="invMoveStorage" disabled placeholder="Leer = Lagerort entfernen"></div><div class="field"><label>Regal / Modul (optional)</label><input id="invMoveShelf" disabled placeholder="Leer = Regal entfernen"></div>
+<div class="field full"><label>Grund / Bemerkung</label><textarea id="invMoveNote" rows="2" placeholder="z. B. Eigentumsübertragung gemäss Gemeindebeschluss"></textarea></div></div>
+<p class="notice small">Bei Teilmengen bleibt die Restmenge am bisherigen Standort und beim bisherigen Eigentümer. Mehrere ausgewählte Positionen werden gemeinsam übertragen.</p><button class="btn primary" type="submit" id="invMoveSave">Übertragung bestätigen</button></form></div></dialog>
+<dialog id="invImportDialog"><div class="dialog-inner"><button type="button" class="dialog-close" data-close="invImportDialog">×</button><h2>Excel-Inventar importieren</h2><p class="small muted">Die Standortblätter werden eingelesen; das Blatt «Gesamtwert Inventar» wird nicht als Material importiert. Bestehende Importpositionen werden anhand Blatt und Zeilennummer übersprungen.</p>
+<div class="field"><label>Exceldatei (.xlsx / .xls) *</label><input type="file" id="invImportFile" accept=".xlsx,.xls,.csv"></div>
+<div class="field"><label>Eigentümer für neu importierte Positionen</label><select id="invImportOwner"></select></div>
+<div class="button-row"><button class="btn" id="invPreviewImport" type="button">Datei prüfen</button><button class="btn primary" id="invCommitImport" type="button" disabled>Geprüfte Positionen importieren</button></div>
+<div id="invImportInfo" class="notice hidden"></div><div class="inv-import-issues" id="invImportIssues"></div></div></dialog>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="config.js?v=0.9"></script><script src="auth.js?v=0.9"></script>
+<script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.2/dist/jspdf.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jspdf-autotable@3.8.4/dist/jspdf.plugin.autotable.min.js"></script>
+<script src="inventory.js?v=1"></script>
+</body></html>
