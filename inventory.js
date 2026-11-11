@@ -115,6 +115,8 @@
   }
   function grouped(kind){
     const groups=new Map();
+    if(kind==='owner')state.owners.forEach(x=>groups.set(x.id,{id:x.id,name:x.name,lines:[],total:0,qty:0}));
+    if(kind==='site')state.sites.forEach(x=>groups.set(x.id,{id:x.id,name:x.name,lines:[],total:0,qty:0}));
     state.items.forEach(x=>{
       const id=kind==='owner'?x.owner_id:kind==='site'?x.site_id:(x.category||'Ohne Kategorie');
       const name=kind==='owner'?ownerName(id):kind==='site'?siteName(id):String(id);
@@ -395,7 +397,8 @@
         };
         candidates.push(item);count++;
       }
-      sheetTotals.push(sheetName+': '+count+' Positionen');
+      const sheetValue=candidates.filter(x=>x.source_sheet===sheetName.trim()).reduce((sum,x)=>sum+lineValue(x),0);
+      sheetTotals.push(sheetName+': '+count+' Positionen · '+chf(sheetValue));
     }
     return {candidates,issues,sheetTotals};
   }
