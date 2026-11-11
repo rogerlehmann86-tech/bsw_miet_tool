@@ -365,7 +365,8 @@
     for(const sheetName of book.SheetNames){
       if(norm(sheetName).includes('gesamtwert inventar'))continue;
       const sheet=book.Sheets[sheetName];
-      const rows=XLSX.utils.sheet_to_json(sheet,{header:1,raw:true,defval:null,blankrows:false});
+      const lastRow=Math.min((XLSX.utils.decode_range(sheet['!ref']||'A1:O1').e.r+1),5000);
+      const rows=XLSX.utils.sheet_to_json(sheet,{header:1,raw:true,defval:null,blankrows:true,range:'A1:O'+lastRow});
       const header=rows.findIndex((r,i)=>i<15&&norm(r?.[0])==='name'&&norm(r?.[1]).includes('beschreibung'));
       if(header<0){issues.push(sheetName+': keine Materialspalten erkannt – Blatt übersprungen');continue;}
       let count=0;
@@ -418,7 +419,8 @@
       state.plan={...plan,pending,duplicates,fileName:file.name};
       byId('invCommitImport').disabled=pending.length===0;
       byId('invImportInfo').classList.remove('hidden');
-      byId('invImportInfo').innerHTML='<strong>'+qtyFmt(plan.candidates.length)+' Materialpositionen erkannt</strong>, '+qtyFmt(pending.length)+' neu, '+qtyFmt(duplicates)+' bereits vorhanden. '+qtyFmt(plan.issues.length)+' Hinweise zur Datenqualität.';
+      const previewValue=plan.candidates.reduce((sum,x)=>sum+lineValue(x),0);
+      byId('invImportInfo').innerHTML='<strong>'+qtyFmt(plan.candidates.length)+' Materialpositionen erkannt</strong>, '+qtyFmt(pending.length)+' neu, '+qtyFmt(duplicates)+' bereits vorhanden. '+qtyFmt(plan.issues.length)+' Hinweise zur Datenqualität. <strong>Berechneter Inventarwert: '+chf(previewValue)+'</strong>. Dieser kann wegen abweichender Preisangaben von der Excel-Zusammenfassung abweichen.';
       byId('invImportIssues').textContent=plan.sheetTotals.join('\n')+'\n\n'+plan.issues.slice(0,80).join('\n')+(plan.issues.length>80?'\n… weitere Hinweise nach Import über Filter «Wert prüfen»':'');
     }catch(err){notifyError(err);}
     finally{byId('invPreviewImport').disabled=false;}
