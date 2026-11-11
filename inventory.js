@@ -343,7 +343,7 @@
       return reportDetail(mode,items,title);
     }catch(err){notifyError(err);}
   }
-  function csvCell(value){return '"'+String(value??'').replace(/"/g,'""')+'"';}
+  function csvCell(value){const text=String(value??'');const safe=/^[=+\-@]/.test(text)?"'"+text:text;return '"'+safe.replace(/"/g,'""')+'"';}
   function exportCsv(){
     const rows=[['Material','Beschreibung','Kategorie','Modul','Eigentümer','Standort','Lagerort','Regal','Anzahl','Einheit','Wert pro Stück CHF','Gesamtwert CHF','Mietobjekt','Wertstatus','Quelle']];
     filteredItems().forEach(x=>rows.push([x.name,x.description,x.category,x.module,ownerName(x.owner_id),siteName(x.site_id),x.storage_location,x.shelf,
@@ -505,7 +505,7 @@
     state.user=user;
     byId('invUser').textContent=user.label;
     handlers();
-    try{await refresh();}catch(err){notifyError(err);}
+    try{await refresh();if(isAdmin()&&state.items.length===0)message('Die Inventardatenbank ist bereit, aber noch leer. Über «Excel importieren» kannst du die vorhandene Inventarliste einlesen und zuerst kontrollieren.');}catch(err){notifyError(err);}
   }
   init().catch(notifyError);
 })();
