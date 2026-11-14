@@ -32,7 +32,7 @@
       <div class="field"><label for="invOwnerFilter">Eigentümer</label><select id="invOwnerFilter"><option value="">Alle</option></select></div>
       <div class="field"><label for="invSiteFilter">Standort</label><select id="invSiteFilter"><option value="">Alle</option></select></div>
       <div class="field"><label for="invCategoryFilter">Kategorie</label><select id="invCategoryFilter"><option value="">Alle</option></select></div>
-      <div class="field"><label for="invSpecialFilter">Ansicht</label><select id="invSpecialFilter"><option value="">Alle Positionen</option><option value="rental">Mit Mietobjekt verknüpft</option><option value="unlinked">Noch nicht mit Mietobjekt verknüpft</option><option value="review">Wert prüfen</option></select></div>
+      <div class="field"><label for="invSpecialFilter">Ansicht</label><select id="invSpecialFilter"><option value="">Alle Positionen</option><option value="in_stock">Nur mit Bestand</option><option value="rental">Mit Mietobjekt verknüpft</option><option value="unlinked">Noch nicht mit Mietobjekt verknüpft</option><option value="review">Wert prüfen</option></select></div>
     </div>
     <div class="inv-export"><label for="invPdfMode"><strong>PDF-Auswertung:</strong></label><select id="invPdfMode"><option value="current">Aktuell gefilterte Materialliste</option><option value="all">Gesamtinventar</option><option value="owners">Zusammenfassung je Eigentümer</option><option value="sites">Zusammenfassung je Standort</option><option value="categories">Zusammenfassung je Kategorie</option><option value="owner-details">Alle Eigentümer mit Materialdetails</option><option value="site-details">Alle Standorte mit Materialdetails</option><option value="rental">Mit Mietobjekten verknüpfte Positionen</option><option value="review">Zu prüfende Werte</option><option value="events">Bewegungsjournal</option></select><button class="btn primary" id="invExportPdf">PDF herunterladen</button><button class="btn" id="invExportCsv">Liste als CSV</button></div>
     <div class="inv-table-scroll"><table class="inv-table"><thead><tr><th class="inv-admin"><input type="checkbox" id="invSelectAll" title="Alle sichtbaren Positionen auswählen"></th><th>Material / Detail</th><th>Standort / Lagerort</th><th>Eigentümer</th><th class="inv-number">Menge</th><th class="inv-number">Stückwert</th><th class="inv-number">Gesamtwert</th><th>Zuordnung</th><th class="inv-admin"></th></tr></thead><tbody id="invItemsBody"></tbody></table></div>
@@ -76,5 +76,5 @@
 <script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.2/dist/jspdf.umd.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/jspdf-autotable@3.8.4/dist/jspdf.plugin.autotable.min.js"></script>
-<script src="inventory.js?v=1"></script>
+<script src="inventory.js?v=2"></script>
 </body></html>
