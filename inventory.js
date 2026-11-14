@@ -71,6 +71,7 @@
       if(owner&&x.owner_id!==owner)return false;
       if(site&&x.site_id!==site)return false;
       if(category&&(x.category||'Ohne Kategorie')!==category)return false;
+      if(special==='in_stock'&&!(Number(x.quantity)>0))return false;
       if(special==='rental'&&!x.rental_product_id)return false;
       if(special==='unlinked'&&x.rental_product_id)return false;
       if(special==='review'&&x.value_status!=='needs_review')return false;
